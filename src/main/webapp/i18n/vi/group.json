@@ -1,0 +1,26 @@
+{
+  "moneyManagementApp": {
+    "group": {
+      "home": {
+        "title": "Groups",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Thêm mới một Group",
+        "createOrEditLabel": "Thêm mới hoặc cập nhật Group",
+        "notFound": "No Groups found"
+      },
+      "created": "Một Group mới được tạo với định danh {{ param }}",
+      "updated": "Một Group cập nhật với định danh {{ param }}",
+      "deleted": "Một Group đã xóa với định danh {{ param }}",
+      "delete": {
+        "question": "Bạn có chắc là muốn xóa Group {{ id }}?"
+      },
+      "detail": {
+        "title": "Group"
+      },
+      "id": "ID",
+      "code": "Code",
+      "nameVi": "Name Vi",
+      "nameEn": "Name En"
+    }
+  }
+}
