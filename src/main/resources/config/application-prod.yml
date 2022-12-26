@@ -33,7 +33,8 @@ spring:
       enabled: false
   data:
     mongodb:
-      uri: mongodb://localhost:27017
+      host: host.docker.internal
+      prot: 27017
       database: money_management
   mail:
     host: localhost
