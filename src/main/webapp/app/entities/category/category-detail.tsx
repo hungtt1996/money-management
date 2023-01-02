@@ -19,6 +19,8 @@ export const CategoryDetail = () => {
   }, []);
 
   const categoryEntity = useAppSelector(state => state.category.entity);
+
+  console.log('>>> category detail is ', categoryEntity);
   return (
     <Row>
       <Col md="8">
@@ -55,7 +57,10 @@ export const CategoryDetail = () => {
               <Translate contentKey="moneyManagementApp.category.icon">Icon</Translate>
             </span>
           </dt>
-          <dd>{categoryEntity.icon}</dd>
+          <dd>
+            {' '}
+            <img src={categoryEntity.icon} alt="icon" width="48px" height="48px" />
+          </dd>
           <dt>
             <span id="groupId">
               <Translate contentKey="moneyManagementApp.category.groupId">Group Id</Translate>

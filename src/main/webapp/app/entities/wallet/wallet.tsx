@@ -1,23 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Table } from 'reactstrap';
 import { Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
+import { createWallet, getEntities, getEntity } from './wallet.reducer';
+import WalletPopup from 'app/entities/wallet/wallet-popup';
 import { IWallet } from 'app/shared/model/wallet.model';
-import { getEntities } from './wallet.reducer';
 
 export const Wallet = () => {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const walletList = useAppSelector(state => state.wallet.entities);
+  const walletList: IWallet[] = useAppSelector(state => state.wallet.entities);
   const loading = useAppSelector(state => state.wallet.loading);
+
+  const [visiblePopup, setVisiblePopup] = useState(false);
 
   useEffect(() => {
     dispatch(getEntities({}));
@@ -25,6 +22,22 @@ export const Wallet = () => {
 
   const handleSyncList = () => {
     dispatch(getEntities({}));
+  };
+
+  const handleHidePopup = (...args) => {
+    setVisiblePopup(false);
+  };
+
+  const handleCreateNewWallet = () => {
+    dispatch(createWallet()).then(() => {
+      setVisiblePopup(true);
+    });
+  };
+
+  const editWallet = (_wallet: IWallet) => {
+    dispatch(getEntity(_wallet.id)).then(() => {
+      setVisiblePopup(true);
+    });
   };
 
   return (
@@ -36,11 +49,10 @@ export const Wallet = () => {
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
             <Translate contentKey="moneyManagementApp.wallet.home.refreshListLabel">Refresh List</Translate>
           </Button>
-          <Link to="/wallet/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="moneyManagementApp.wallet.home.createLabel">Create new Wallet</Translate>
-          </Link>
+          <Button className="me-2" color="primary" onClick={handleCreateNewWallet} disabled={loading}>
+            <FontAwesomeIcon icon="plus" spin={loading} />{' '}
+            <Translate contentKey="moneyManagementApp.wallet.home.createLabel">Create new Category</Translate>
+          </Button>
         </div>
       </h2>
       <div className="table-responsive">
@@ -48,9 +60,9 @@ export const Wallet = () => {
           <Table responsive>
             <thead>
               <tr>
-                <th>
-                  <Translate contentKey="moneyManagementApp.wallet.id">ID</Translate>
-                </th>
+                {/* <th>
+                                <Translate contentKey="moneyManagementApp.wallet.id">ID</Translate>
+                            </th>*/}
                 <th>
                   <Translate contentKey="moneyManagementApp.wallet.code">Code</Translate>
                 </th>
@@ -66,26 +78,27 @@ export const Wallet = () => {
                 <th>
                   <Translate contentKey="moneyManagementApp.wallet.ccy">Ccy</Translate>
                 </th>
-                <th>
-                  <Translate contentKey="moneyManagementApp.wallet.icon">Icon</Translate>
-                </th>
                 <th />
               </tr>
             </thead>
             <tbody>
               {walletList.map((wallet, i) => (
                 <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/wallet/${wallet.id}`} color="link" size="sm">
-                      {wallet.id}
-                    </Button>
-                  </td>
+                  {/* <td>
+                                    <Button tag={Link} to={`/wallet/${wallet.id}`} color="link" size="sm">
+                                        {wallet.id}
+                                    </Button>
+                                </td>*/}
                   <td>{wallet.code}</td>
-                  <td>{wallet.nameVi}</td>
+                  <td>
+                    <span>
+                      <img src={wallet.icon} alt="icon" width="48px" height="48px" />
+                    </span>{' '}
+                    {wallet.nameVi}
+                  </td>
                   <td>{wallet.nameEn}</td>
-                  <td>{wallet.balance}</td>
+                  <td>{wallet.balance.toLocaleString()}</td>
                   <td>{wallet.ccy}</td>
-                  <td>{wallet.icon}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/wallet/${wallet.id}`} color="info" size="sm" data-cy="entityDetailsButton">
@@ -94,7 +107,7 @@ export const Wallet = () => {
                           <Translate contentKey="entity.action.view">View</Translate>
                         </span>
                       </Button>
-                      <Button tag={Link} to={`/wallet/${wallet.id}/edit`} color="primary" size="sm" data-cy="entityEditButton">
+                      <Button color="primary" size="sm" data-cy="entityEditButton" onClick={() => editWallet(wallet)}>
                         <FontAwesomeIcon icon="pencil-alt" />{' '}
                         <span className="d-none d-md-inline">
                           <Translate contentKey="entity.action.edit">Edit</Translate>
@@ -120,6 +133,8 @@ export const Wallet = () => {
           )
         )}
       </div>
+
+      {visiblePopup && <WalletPopup visible={visiblePopup} onHidePopup={handleHidePopup} />}
     </div>
   );
 };

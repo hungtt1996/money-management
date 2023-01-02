@@ -1,16 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Button, Row, Col, FormText } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import { isNumber, Translate, translate, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-
-import { ICategory } from 'app/shared/model/category.model';
-import { getEntity, updateEntity, createEntity, reset, createCategory } from './category.reducer';
-import { languages, locales } from 'app/config/translation';
+import { createCategory, createEntity, getEntity, updateEntity } from './category.reducer';
 import { ICON_LINKS } from 'app/shared/util/constant';
 import { getEntities } from 'app/entities/group/group.reducer';
 import { getEntities as getCategories } from 'app/entities/category/category.reducer';
@@ -29,6 +23,8 @@ export const CategoryUpdate = () => {
   const updateSuccess = useAppSelector(state => state.category.updateSuccess);
   const groupList = useAppSelector(state => state.group.entities);
   const categoryList = useAppSelector(state => state.category.entities);
+
+  const [icon, setIcon] = useState(null);
 
   const handleClose = () => {
     navigate('/category');
@@ -147,7 +143,7 @@ export const CategoryUpdate = () => {
                   </option>
                 ))}
               </ValidatedField>
-              {/*<ValidatedField
+              {/* <ValidatedField
                 label={translate('moneyManagementApp.category.icon')}
                 id="category-icon"
                 name="icon"
@@ -168,12 +164,12 @@ export const CategoryUpdate = () => {
                 }}
               >
                 {groupList.map(g => (
-                  <option value={g.code} key={g.code}>
+                  <option value={g.id} key={g.id}>
                     {g.nameVi}
                   </option>
                 ))}
               </ValidatedField>
-              {/*<ValidatedField
+              {/* <ValidatedField
                 label={translate('moneyManagementApp.category.groupId')}
                 id="category-groupId"
                 name="groupId"
@@ -198,7 +194,7 @@ export const CategoryUpdate = () => {
                     </option>
                   ))}
               </ValidatedField>
-              {/*<ValidatedField
+              {/* <ValidatedField
                 label={translate('moneyManagementApp.category.parentId')}
                 id="category-parentId"
                 name="parentId"

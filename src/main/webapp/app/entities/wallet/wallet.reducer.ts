@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { createAsyncThunk, isFulfilled, isPending, isRejected } from '@reduxjs/toolkit';
+import { createAsyncThunk, isFulfilled, isPending } from '@reduxjs/toolkit';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
-import { IQueryParams, createEntitySlice, EntityState, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
-import { IWallet, defaultValue } from 'app/shared/model/wallet.model';
+import { createEntitySlice, EntityState, IQueryParams, serializeAxiosError } from 'app/shared/reducers/reducer.utils';
+import { defaultValue, IWallet } from 'app/shared/model/wallet.model';
 
 const initialState: EntityState<IWallet> = {
   loading: false,
@@ -17,6 +17,8 @@ const initialState: EntityState<IWallet> = {
 const apiUrl = 'api/wallets';
 
 // Actions
+
+export const createWallet = createAsyncThunk('category/createEntity', async () => ({ code: 'ok' }));
 
 export const getEntities = createAsyncThunk('wallet/fetch_entity_list', async ({ page, size, sort }: IQueryParams) => {
   const requestUrl = `${apiUrl}?cacheBuster=${new Date().getTime()}`;
@@ -80,6 +82,10 @@ export const WalletSlice = createEntitySlice({
   initialState,
   extraReducers(builder) {
     builder
+      .addCase(createWallet.fulfilled, (state, action) => {
+        state.loading = false;
+        state.entity = null;
+      })
       .addCase(getEntity.fulfilled, (state, action) => {
         state.loading = false;
         state.entity = action.payload.data;

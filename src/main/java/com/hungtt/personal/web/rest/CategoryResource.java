@@ -2,9 +2,10 @@ package com.hungtt.personal.web.rest;
 
 import com.hungtt.personal.repository.CategoryRepository;
 import com.hungtt.personal.service.CategoryService;
-import com.hungtt.personal.service.dto.CategoryDTO;
+import com.hungtt.personal.service.dto.category.CategoryDTO;
+import com.hungtt.personal.service.dto.category.CreateCategoryDTO;
+import com.hungtt.personal.service.dto.category.UpdateCategoryDTO;
 import com.hungtt.personal.web.rest.errors.BadRequestAlertException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
@@ -42,13 +43,19 @@ public class CategoryResource {
         this.categoryRepository = categoryRepository;
     }
 
+    @PostMapping("categories")
+    public ResponseEntity<Void> createCategory(@Valid @RequestBody CreateCategoryDTO dto) {
+        categoryService.create(dto);
+        return ResponseEntity.ok(null);
+    }
+
     /**
      * {@code POST  /categories} : Create a new category.
      *
      * @param categoryDTO the categoryDTO to create.
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new categoryDTO, or with status {@code 400 (Bad Request)} if the category has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
-     */
+     *//*
     @PostMapping("/categories")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws URISyntaxException {
         log.debug("REST request to save Category : {}", categoryDTO);
@@ -60,13 +67,13 @@ public class CategoryResource {
             .created(new URI("/api/categories/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId()))
             .body(result);
-    }
+    }*/
 
     /**
      * {@code PUT  /categories/:id} : Updates an existing category.
      *
-     * @param id the id of the categoryDTO to save.
-     * @param categoryDTO the categoryDTO to update.
+     * @param id          the id of the categoryDTO to save.
+     * @param dto the categoryDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated categoryDTO,
      * or with status {@code 400 (Bad Request)} if the categoryDTO is not valid,
      * or with status {@code 500 (Internal Server Error)} if the categoryDTO couldn't be updated.
@@ -75,13 +82,13 @@ public class CategoryResource {
     @PutMapping("/categories/{id}")
     public ResponseEntity<CategoryDTO> updateCategory(
         @PathVariable(value = "id", required = false) final String id,
-        @Valid @RequestBody CategoryDTO categoryDTO
+        @Valid @RequestBody UpdateCategoryDTO dto
     ) throws URISyntaxException {
-        log.debug("REST request to update Category : {}, {}", id, categoryDTO);
-        if (categoryDTO.getId() == null) {
+        log.debug("REST request to update Category : {}, {}", id, dto);
+        if (dto.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        if (!Objects.equals(id, categoryDTO.getId())) {
+        if (!Objects.equals(id, dto.getId())) {
             throw new BadRequestAlertException("Invalid ID", ENTITY_NAME, "idinvalid");
         }
 
@@ -89,17 +96,17 @@ public class CategoryResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
 
-        CategoryDTO result = categoryService.update(categoryDTO);
+        CategoryDTO result = categoryService.update(dto);
         return ResponseEntity
             .ok()
-            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, categoryDTO.getId()))
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, dto.getId()))
             .body(result);
     }
 
     /**
      * {@code PATCH  /categories/:id} : Partial updates given fields of an existing category, field will ignore if it is null
      *
-     * @param id the id of the categoryDTO to save.
+     * @param id          the id of the categoryDTO to save.
      * @param categoryDTO the categoryDTO to update.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated categoryDTO,
      * or with status {@code 400 (Bad Request)} if the categoryDTO is not valid,
